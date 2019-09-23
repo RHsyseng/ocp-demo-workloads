@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rhel8-ssh
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: nodeport
+    nodePort: 30006
+    port: 27017
+    protocol: TCP
+    targetPort: 22
+  selector:
+    app: rhel8
+  type: NodePort

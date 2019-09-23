@@ -1,0 +1,47 @@
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  name: rhel8
+  labels:
+    app: rhel8
+spec:
+  running: true
+  template:
+    metadata:
+      labels:
+        app: rhel8
+    spec:
+      terminationGracePeriodSeconds: 60
+      domain:
+        cpu:
+          cores: 2
+          sockets: 2
+          threads: 1
+        devices:
+          disks:
+          - name: rootdisk
+            disk:
+              bus: virtio
+          - name: cloudinitdisk
+            disk:
+              bus: virtio
+          interfaces:
+          - bridge: {}
+            name: brext
+        resources:
+          requests:
+            memory: 4G
+      networks:
+      - multus:
+          networkName: brext
+        name: brext
+      volumes:
+      - name: rootdisk
+        persistentVolumeClaim:
+          claimName: rhel8-pvc
+      - name: cloudinitdisk
+        cloudInitNoCloud:
+          userData: |-
+            #cloud-config
+            password: redhat
+            chpasswd: { expire: False }

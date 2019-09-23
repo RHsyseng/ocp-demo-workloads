@@ -1,0 +1,108 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: rhel8-server-small-0.6.1
+  annotations:
+    openshift.io/display-name: "Red Hat Enterprise Linux 7.0+ VM"
+    description: >-
+      This template can be used to create a VM suitable for
+      Red Hat Enterprise Linux 8 and newer.
+      The template assumes that a PVC is available which is providing the
+      necessary RHEL disk image.
+    tags: "kubevirt,virtualmachine,linux,rhel"
+
+    iconClass: "icon-rhel"
+    openshift.io/provider-display-name: "KubeVirt"
+    openshift.io/documentation-url: "https://github.com/kubevirt/common-templates"
+    openshift.io/support-url: "https://github.com/kubevirt/common-templates/issues"
+    template.openshift.io/bindable: "false"
+
+    template.kubevirt.io/version: v1alpha1
+    defaults.template.kubevirt.io/disk: rootdisk
+    template.kubevirt.io/editable: |
+      /objects[0].spec.template.spec.domain.cpu.sockets
+      /objects[0].spec.template.spec.domain.cpu.cores
+      /objects[0].spec.template.spec.domain.cpu.threads
+      /objects[0].spec.template.spec.domain.resources.requests.memory
+      /objects[0].spec.template.spec.domain.devices.disks
+      /objects[0].spec.template.spec.volumes
+      /objects[0].spec.template.spec.networks
+
+    name.os.template.kubevirt.io/rhel8.0: Red Hat Enterprise Linux 8.0
+
+    validations: |
+      [
+        {
+          "name": "minimal-required-memory",
+          "path": "jsonpath::.spec.domain.resources.requests.memory",
+          "rule": "integer",
+          "message": "This VM requires more memory.",
+          "min": 2147483648
+        },
+      ]
+
+  labels:
+    os.template.kubevirt.io/rhel8.0: "true"
+    workload.template.kubevirt.io/server: "true"
+    flavor.template.kubevirt.io/small: "true"
+    template.kubevirt.io/type: "base"
+
+objects:
+- apiVersion: kubevirt.io/v1alpha3
+  kind: VirtualMachine
+  metadata:
+    name: ${NAME}
+    labels:
+      app: ${NAME}
+  spec:
+    running: true
+    template:
+      metadata:
+        labels:
+          kubevirt.io/domain: ${NAME}
+          kubevirt.io/size: small
+          app: ${NAME}
+      spec:
+        terminationGracePeriodSeconds: 60
+        domain:
+          cpu:
+            cores: 2
+            sockets: 2
+            threads: 1
+          devices:
+            disks:
+            - name: rootdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+            interfaces:
+            - bridge: {}
+              name: default
+          resources:
+            requests:
+              memory: 4G
+        networks:
+        - name: default
+          pod: {}
+        volumes:
+        - name: rootdisk
+          persistentVolumeClaim:
+            claimName: ${PVCNAME}
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            userData: |-
+              #cloud-config
+              password: redhat
+              chpasswd: { expire: False }
+              ssh_pwauth: True
+parameters:
+- description: VM name
+  from: 'rhel8-[a-z0-9]{16}'
+  generate: expression
+  name: NAME
+- name: PVCNAME
+  description: Name of the PVC with the disk image
+  required: true
+

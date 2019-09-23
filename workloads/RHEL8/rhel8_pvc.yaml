@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "rhel8-pvc"
+  labels:
+    app: containerized-data-importer
+  annotations:
+    cdi.kubevirt.io/storage.import.endpoint: "http://10.19.143.248/pub/projects/kni/disk-images/rhel8.qcow2"
+spec:
+  volumeMode: Block
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 11Gi

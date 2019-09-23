@@ -1,0 +1,35 @@
+= AMQ Streams =
+
+== Requirements ==
+
+* OCP 4.2 (tested)
+* Persistent storage with a default _StorageClass_
+
+== Manifests ==
+
+* link:manifests/amq-streams/amq-streams-olm-subscription.yaml[OLM subscription]
+** Creates a resource _Subscription_ which triggers the AMQ Streams operator deployment under the _openshift-operators_ namespace, this adds all the AMQ Streams CRDs to the cluster
+* link:manifests/amq-streams/amq-streams-mycluster.yaml[AMQ Streams cluster]
+** Creates the required CRs on the _default_ namespace, it'll trigger the deployment of Zookeeper and Kafka, both using persistent storage
+* link:manifests/amq-streams/amq-streams-workload-deployment.yaml[Workload deployment]
+** Deploys a Kafka producer and a consumer, in the _default_ namespace, both connect to the previously deployed cluster. To watch the messages, read the logs for the consumer provider
+* link:manifests/monitoring/alerting-rules.yaml[Prometheus Alerting rules]
+* link:manifests/monitoring/alertmanager.yaml[Prometheus Alert Manager]
+** Deploys Prometheus alerting manager
+* link:manifests/monitoring/prometheus.yaml[Prometheus]
+** Deploys a Prometheus instance
+* link:manifests/monitoring/grafana.yaml[Grafana]
+** Deploys a Grafana instance
+* link:manifests/dashboards/amq-streams-kafka-dashboard.json[AMQ Streams Kafka dashboard]
+** Kafka dashboard definition
+* link:manifests/dashboards/amq-streams-zookeeper-dashboard.json[AMQ Streams Zookeeper dashboard]
+** Zookeeper dashboard definition
+
+== Deployment script ==
+
+The link:deploy-amq-streams.sh[deployment script] doesn't require any argument whatsoever, it'll check whether there's a default _StorageClass_, if there's none, it'll exit without doing anything, otherwise it'll use the aforementioned manifests to deploy the whole thing.
+
+== Accessing Grafana ==
+
+* URL: http://grafana-amq-workload.apps.cluster_name.test.metalkube.org/
+* Credentials: admin/admin
