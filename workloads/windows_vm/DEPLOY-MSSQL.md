@@ -10,14 +10,12 @@ MS-SQL "Express" is the free-to-use version of Microsoft SQL Server that allows 
 
 ## Getting The Installation Files
 
-This involves downloading a [zip file](http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/kni/misc/Share.zip) from the Red Hat internal satellite (so it will have to be downloaded from a VPN-connected system).
+This involves different files:
 
-The zip file contains:
-
-* `InstallConfig.ini` is the SQL equivalent of a kickstart file for RHEL or an ignition file for CoreOS. 
-* `install.bat` Batch script for managing the installation
-* `SQLServer2017-SSEI-Expr.exe` The installer for the free-to-use SQL Express server. This produces a headless service. This is just a stub and goes out to the internet to download the actual files.
-* `SSMS-Setup-ENU.exe` This is the full installer for Management Studio (analogous to MySQL's Workbench program) which produces a demo-able UI that Windows admins who use SQL server would be more familiar with.
+* [`InstallConfig.ini`](./InstallConfig.ini) is the SQL equivalent of a kickstart file for RHEL or an ignition file for CoreOS.
+* [`install.bat`](./install.bat) Batch script for managing the installation
+* `SQLServer2017-SSEI-Expr.exe` The installer for the free-to-use SQL Express server. This produces a headless service. This is just a stub and goes out to the internet to download the actual files. Get it from https://www.microsoft.com/en-us/download/details.aspx?id=55994
+* `SSMS-Setup-ENU.exe` This is the full installer for Management Studio (analogous to MySQL's Workbench program) which produces a demo-able UI that Windows admins who use SQL server would be more familiar with. Get it from https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-2017
 
 ## Running The Installation
 

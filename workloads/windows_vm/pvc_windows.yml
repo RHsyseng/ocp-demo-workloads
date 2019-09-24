@@ -5,7 +5,7 @@ metadata:
   labels:
     app: containerized-data-importer
   annotations:
-    cdi.kubevirt.io/storage.import.endpoint: "http://10.8.120.188/Summit2019.raw"
+    cdi.kubevirt.io/storage.import.endpoint: "http://1.1.1.1/windowsvm.raw"
 spec:
   volumeMode: Block
   accessModes:

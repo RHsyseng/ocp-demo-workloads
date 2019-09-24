@@ -20,3 +20,5 @@ Those demos were run on a baremetal IPI installation, but should work the same w
 * [OCP pipelines](workloads/pipelines)
 * [duckhunt](workloads/duckhunt)
 * [kubeinvaders](workloads/kubeinvaders)
+
+There are specific README files on each folder containing the different workloads.

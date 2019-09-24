@@ -1,9 +1,8 @@
 #!/bin/bash
-
-OPERATORS_NAMESPACE="openshift-operators"
-TKN_VERSION="0.2.2"
-
 set -ex
+OPERATORS_NAMESPACE="openshift-operators"
+TKN_VERSION="0.3.1"
+PIPELINESNAMESPACE="pipelines-tutorial"
 
 # Create a subscription
 cat <<EOF | oc create -f -
@@ -36,28 +35,20 @@ rm -f tkn_${TKN_VERSION}_Linux_x86_64.tar.gz
 
 # From https://github.com/openshift/pipelines-tutorial
 
-oc create -f http://bit.ly/pipelines-demo || true
+oc new-project ${PIPELINESNAMESPACE} --skip-config-write=true
 
-# First time it fails because some components are not deployed
-# oc create -f http://bit.ly/pipelines-demo
-# namespace/pipelines-demo created
-# role.rbac.authorization.k8s.io/pipeline created
-# rolebinding.rbac.authorization.k8s.io/default-pipeline-binding created
-# rolebinding.authorization.openshift.io/default-admin-binding created
-# imagestream.image.openshift.io/spring-petclinic created
-# deploymentconfig.apps.openshift.io/spring-petclinic created
-# service/spring-petclinic created
-# route.route.openshift.io/spring-petclinic created
-# pipeline.tekton.dev/petclinic-pipeline created
-# unable to recognize "http://bit.ly/pipelines-demo": no matches for kind "Task" # in version "tekton.dev/v1alpha1"
-# unable to recognize "http://bit.ly/pipelines-demo": no matches for kind "Task" # in version "tekton.dev/v1alpha1"
-# unable to recognize "http://bit.ly/pipelines-demo": no matches for kind  "PipelineResource" in version "tekton.dev/v1alpha1"
-# unable to recognize "http://bit.ly/pipelines-demo": no matches for kind  "PipelineResource" in version "tekton.dev/v1alpha1"
-# So... sleep a bit and try again
+oc create serviceaccount pipeline -n ${PIPELINESNAMESPACE}
 
-sleep 30
-oc create -f http://bit.ly/pipelines-demo || true
+oc adm policy add-scc-to-user privileged -z pipeline -n ${PIPELINESNAMESPACE}
+oc adm policy add-role-to-user edit -z pipeline -n ${PIPELINESNAMESPACE}
 
-oc project pipelines-demo
+oc create -f https://raw.githubusercontent.com/openshift/pipelines-tutorial/master/resources/petclinic.yaml -n ${PIPELINESNAMESPACE}
+oc create -f https://raw.githubusercontent.com/tektoncd/catalog/master/openshift-client/openshift-client-task.yaml -n ${PIPELINESNAMESPACE}
+oc create -f https://raw.githubusercontent.com/openshift/pipelines-catalog/master/s2i-java-8/s2i-java-8-task.yaml -n ${PIPELINESNAMESPACE}
+oc create -f https://raw.githubusercontent.com/openshift/pipelines-tutorial/master/resources/petclinic-deploy-pipeline.yaml -n ${PIPELINESNAMESPACE}
+oc create -f https://raw.githubusercontent.com/openshift/pipelines-tutorial/master/resources/petclinic-resources.yaml -n ${PIPELINESNAMESPACE}
 
-tkn pipeline start petclinic-pipeline -r app-git=petclinic-git -r app-image=petclinic-image
+tkn pipeline start petclinic-deploy-pipeline \
+        -r app-git=petclinic-git \
+        -r app-image=petclinic-image \
+        -s pipeline -n ${PIPELINESNAMESPACE}
