@@ -1,12 +1,14 @@
 # ocp4-demo-workloads
 
-This repo contains the assets used for demoing several workloads 
+This repo contains assets used for deploying several workloads to be use for demo purposes.
 
 ## Requirements
 
-an OCP4 installation with
+An OCP4 installation.
 
-## Deploying e2e demo workloads
+Those demos were run on a baremetal IPI installation, but should work the same way on other platforms.
+
+## Deployment
 
 * [CNV](CNV)
 * [OCS](OCS)
