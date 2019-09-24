@@ -5,7 +5,7 @@ metadata:
   labels:
     app: containerized-data-importer
   annotations:
-    cdi.kubevirt.io/storage.import.endpoint: "http://10.19.143.248/pub/projects/kni/disk-images/rhel8.qcow2"
+    cdi.kubevirt.io/storage.import.endpoint: "http://1.1.1.1/rhel8.qcow2"
 spec:
   volumeMode: Block
   accessModes:

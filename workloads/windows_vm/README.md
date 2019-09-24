@@ -1,9 +1,6 @@
-# Steps
+# Windows VM
 
-```
-bash deploy_windows.sh
-oc new-project demo
-oc create -f nad_brext.yml -n demo
-oc create -f pvc_windows.yml -n demo
-oc create -f vm_windows.yml -n demo
-```
+The [`deploy-windows.sh`](./deploy-windows.sh) script will deploy a Windows VM
+using a `NetworkAttachmentDefinition` to bind the network interface into a `brext` bridge in the nodes.
+
+NOTE: Replace the `cdi.kubevirt.io/storage.import.endpoint: "cdi.kubevirt.io/storage.import.endpoint: "http://1.1.1.1/windowsvm.raw"` label with the proper location of the raw file.
